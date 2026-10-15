@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head><title>Crop P3 Photo</title></head>
+<body>
+<div id="status">Cropping...</div>
+<canvas id="c"></canvas>
+<script>
+const img = new Image();
+img.onload = () => {
+    const canvas = document.getElementById('c');
+    // Exact photograph bounding box in reference slide
+    const sx = 561, sy = 21, sw = 414, sh = 533;
+    canvas.width = sw;
+    canvas.height = sh;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, sw, sh);
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.98);
+    fetch('/save-image?name=p3_spiral_clean.jpg', {
+        method: 'POST',
+        body: dataUrl
+    }).then(r => r.text()).then(t => {
+        document.getElementById('status').innerText = 'SUCCESS: ' + t;
+    }).catch(err => {
+        document.getElementById('status').innerText = 'ERROR: ' + err;
+    });
+};
+img.src = 'p3_reference_exact.png';
+</script>
+</body>
+</html>
